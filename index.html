@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="CraftingGamerTom">
+
+<title>BSTable - Editable Bootstrap Table</title>
+
+<!-- Bootstrap core CSS-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<!-- Font Awesome -->
+<link href="/resources/sbadmin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+<!-- JQuery library -->
+<script src="/resources/jquery/jquery-3.4.1.min.js"></script>
+
+</head>
+
+<body id="page-top" class="sidebar-toggled">
+
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">BSTable</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="https://github.com/CraftingGamerTom/bstable">View on Github <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="http://thomasrokicki.com">Visit Author's website <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+        </form>
+      </div>
+    </nav>
+
+    <main role="main" class="container" style="padding-top:60px;">
+
+    	<div style="margin-top:20px;">
+    		<h2>Example of Basic BSTable</h2>
+		  	<table class="table table-striped table-bordered" id="table1">
+			  	<thead class="thead-dark">
+				    <tr>
+				      <th scope="col">#</th>
+				      <th scope="col">First</th>
+				      <th scope="col">Last</th>
+				      <th scope="col">Handle</th>
+				    </tr>
+			  	</thead>
+			  	<tbody>
+				    <tr>
+				      <th scope="row">1</th>
+				      <td>Mark</td>
+				      <td>Otto</td>
+				      <td>@mdo</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">2</th>
+				      <td>Jacob</td>
+				      <td>Thornton</td>
+				      <td>@fat</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">3</th>
+				      <td>Larry</td>
+				      <td>the Bird</td>
+				      <td>@twitter</td>
+				    </tr>
+			  	</tbody>
+			</table>
+		</div>
+
+    	<div style="margin-top:20px;">
+    		<h2>Example of Add New Row button, removed action label, and only some columns are editable</h2>
+    		<button id="table2-new-row-button" class="btn btn-dark">New Row</button>
+		  	<table class="table table-striped table-bordered" id="table2">
+			  	<thead class="thead-dark">
+				    <tr>
+				      <th scope="col">#</th>
+				      <th scope="col">First</th>
+				      <th scope="col">Last</th>
+				      <th scope="col">Handle</th>
+				    </tr>
+			  	</thead>
+			  	<tbody>
+				    <tr>
+				      <th scope="row">1</th>
+				      <td>Mark</td>
+				      <td>Otto</td>
+				      <td>@mdo</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">2</th>
+				      <td>Jacob</td>
+				      <td>Thornton</td>
+				      <td>@fat</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">3</th>
+				      <td>Larry</td>
+				      <td>the Bird</td>
+				      <td>@twitter</td>
+				    </tr>
+			  	</tbody>
+			</table>
+		</div>
+
+    	<div style="margin-top:20px;">
+    		<h2>Example of Dynamic Table with refreshing BSTable</h2>
+    		<button id="table2-new-row-button" class="btn btn-dark" onclick="dynamicTableValuesExample()">Update Table</button>
+		  	<table class="table table-striped table-bordered" id="table3">
+			  	<thead class="thead-dark">
+				    <tr>
+				      <th scope="col">#</th>
+				      <th scope="col">First</th>
+				      <th scope="col">Last</th>
+				      <th scope="col">Handle</th>
+				    </tr>
+			  	</thead>
+			  	<tbody id="table3-body">
+				    <tr>
+				      <th scope="row">1</th>
+				      <td>Mark</td>
+				      <td>Otto</td>
+				      <td>@mdo</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">2</th>
+				      <td>Jacob</td>
+				      <td>Thornton</td>
+				      <td>@fat</td>
+				    </tr>
+				    <tr>
+				      <th scope="row">3</th>
+				      <td>Larry</td>
+				      <td>the Bird</td>
+				      <td>@twitter</td>
+				    </tr>
+			  	</tbody>
+			</table>
+		</div>
+
+    </main><!-- /.container -->
+
+	<script src="bstable.js"></script>
+
+	<script>
+		// Basic example
+		var example1 = new BSTable("table1");
+		example1.init();
+
+		// Example with a add new row button & only some columns editable & removed actions column label
+		var example2 = new BSTable("table2", {
+			editableColumns:"1,2",
+			$addButton: $('#table2-new-row-button'),
+			onEdit:function() {
+				console.log("EDITED");
+			},
+			advanced: {
+				columnLabel: ''
+			}
+		});
+		example2.init();
+
+		// Example with dynamic table that requires BSTable refresh
+		// TODO Create method to randomly seed a random amount of rows in the table
+		var example3 = new BSTable("table3");
+		example3.init();
+
+		function dynamicTableValuesExample() {
+			// Generate new values for the table and show how BSTable updates
+			let names = ['Matt', 'John', 'Billy', 'Erica', 'Sammy', 'Tom', 'Tate', 'Emily', 'Mike', 'Bob'];
+			let numberOfRows = Math.floor(Math.random() * 10);
+
+			document.getElementById("table3-body").innerHTML = '';	// Clear current table
+			for(let i = 0; i < numberOfRows; i++) {
+				let randomNameIndex = Math.floor(Math.random() * 10);
+
+				let row = document.createElement("tr");
+				row.innerHTML = `<th scope="row">` + i + `</th><td>Value</td><td>` + names[randomNameIndex] + `</td><td>@twitter</td>`;
+				document.getElementById("table3-body").append(row);
+			}
+
+			example3.refresh();
+		}
+
+	</script>
+
+</body>
+
+</html>
