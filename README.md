@@ -7,7 +7,7 @@ BSTable Copyright (C) 2020 Thomas Rokicki (CraftingGamerTom)
 Javascript library to make HMTL tables editable, using Bootstrap. Based on the javascript library bootstable which enabled editing of tables per page - however did not allow for different event handling per table.
 Thank you t-edson for your contributions to the open source community and enabling me to create this library on top of your work.
 
-![Bootstable](http://blog.pucp.edu.pe/blog/tito/wp-content/uploads/sites/610/2018/01/Sin-título-13.png "Bootstable")
+![BSTable](https://github.com/CraftingGamerTom/bstable/blob/master/bstable.png?raw=true "BSTable")
 
 "BSTable" is a javascript library (plugin), that converts a HTML static bootstrap table to an editable table. 
 A table is made editable, it inserts several buttons to perform the edit actions.
