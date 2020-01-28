@@ -51,6 +51,13 @@ class BSTable {
     this.options = $.extend(true, defaults, options);
 
     /** @private */ this.actionsColumnHTML = '<td name="bstable-actions">' + this.options.advanced.buttonHTML + '</td>'; 
+
+    //Process "editableColumns" parameter. Sets the columns that will be editable
+    if (this.options.editableColumns != null) {
+      console.log("editable columns: ", this.options.editableColumns);
+      //Extract felds
+      this.options.editableColumns = this.options.editableColumns.split(',');
+    }
   }
 
   // --------------------------------------------------
@@ -74,11 +81,6 @@ class BSTable {
       this.options.$addButton.click(function() {
         _this._actionAddRow();
       });
-    }
-    //Process "editableColumns" parameter. Sets the columns that will be editable
-    if (this.options.editableColumns != null) {
-      //Extract felds
-      this.options.editableColumns = this.options.editableColumns.split(',');
     }
   }
 
