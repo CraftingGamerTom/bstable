@@ -199,6 +199,7 @@ class BSTable {
     this._actionsModeNormal(button);
   }
   _actionAddRow() {
+    var me=this;
     // Add row to this table
 
     var $allRows = this.table.find('tbody tr');
@@ -210,7 +211,7 @@ class BSTable {
       $cols.each(function() {
         let column = this; // Inner function this (column object)
         if ($(column).attr('name')=='bstable-actions') {
-          newColumnHTML = newColumnHTML + actionsColumnHTML;  // add action buttons
+          newColumnHTML = newColumnHTML + me.actionsColumnHTML;  // add action buttons
         } else {
           newColumnHTML = newColumnHTML + '<td></td>';
         }
