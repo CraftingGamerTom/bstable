@@ -55,7 +55,7 @@ class BSTable {
     //Process "editableColumns" parameter. Sets the columns that will be editable
     if (this.options.editableColumns != null) {
       // console.log("[DEBUG] editable columns: ", this.options.editableColumns);
-      
+
       //Extract felds
       this.options.editableColumns = this.options.editableColumns.split(',');
     }
@@ -282,6 +282,8 @@ class BSTable {
   // --------------------------------------------------
 
   convertTableToCSV(separator) {  
+  separator = (separator === undefined ? "," : separator);
+
   // Convert table to CSV
     let _this = this;
     let $currentRowValues = '';
