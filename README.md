@@ -40,8 +40,9 @@ Create the BSTable with examples of setting common options
     var editableTable = new BSTable("table-id-of-table-to-make-editable", {
       editableColumns: "1,2,3",           // Make columns 1, 2, & 3 editable
       $addButton: $('#add-new-button'),   // Set the add new row button
-      onEdit:function() {                 // Set function to call when editing complete
+      onEdit:function(row) {              // Set function to call when editing complete
         // call API here.
+        // use 'row' element to access the columns.
       },
       advanced: {                         
           columnLabel: ''                 // Set the column label to have no text
