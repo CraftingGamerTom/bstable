@@ -186,7 +186,7 @@ class BSTable {
       $td.html(cont);                         // set the content and remove the input fields
     });
     this._actionsModeNormal(button);
-    this.options.onEdit($currentRow);
+    this.options.onEdit($currentRow[0]);
   }
   _rowCancel(button) {
   // Reject the changes

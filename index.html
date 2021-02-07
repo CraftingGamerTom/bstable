@@ -164,8 +164,11 @@
 		var example2 = new BSTable("table2", {
 			editableColumns:"1,2",
 			$addButton: $('#table2-new-row-button'),
-			onEdit:function() {
-				console.log("EDITED");
+			onEdit:function(rowElement) {
+				console.log("EDITED:", rowElement);
+
+				let rowAsJQuery = $(rowElement);
+				console.log("EDITED (as jquery):", rowAsJQuery);
 			},
 			advanced: {
 				columnLabel: ''
