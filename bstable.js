@@ -24,7 +24,7 @@ class BSTable {
     var defaults = {
       editableColumns: null,          // Index to editable columns. If null all td will be editable. Ex.: "1,2,3,4,5"
       $addButton: null,               // Jquery object of "Add" button
-      onEdit: function() {},          // Called after edition
+      onEdit: function() {},          // Called after editing (accept button clicked)
       onBeforeDelete: function() {},  // Called before deletion
       onDelete: function() {},        // Called after deletion
       onAdd: function() {},           // Called when added a new row
@@ -51,6 +51,14 @@ class BSTable {
     this.options = $.extend(true, defaults, options);
 
     /** @private */ this.actionsColumnHTML = '<td name="bstable-actions">' + this.options.advanced.buttonHTML + '</td>'; 
+
+    //Process "editableColumns" parameter. Sets the columns that will be editable
+    if (this.options.editableColumns != null) {
+      // console.log("[DEBUG] editable columns: ", this.options.editableColumns);
+      
+      //Extract felds
+      this.options.editableColumns = this.options.editableColumns.split(',');
+    }
   }
 
   // --------------------------------------------------
@@ -74,11 +82,6 @@ class BSTable {
       this.options.$addButton.click(function() {
         _this._actionAddRow();
       });
-    }
-    //Process "editableColumns" parameter. Sets the columns that will be editable
-    if (this.options.editableColumns != null) {
-      //Extract felds
-      this.options.editableColumns = this.options.editableColumns.split(',');
     }
   }
 
@@ -113,9 +116,9 @@ class BSTable {
    * @return {boolean} true if row is currently being edited.
    * @since 1.0.0
    */
-  currentlyEditingRow($row) {
+  currentlyEditingRow($currentRow) {
     // Check if the row is currently being edited
-    if ($row.attr('data-status')=='editing') {
+    if ($currentRow.attr('data-status')=='editing') {
         return true;
     } else {
         return false;
@@ -131,16 +134,16 @@ class BSTable {
     $(button).parent().find('#bCanc').hide();
     $(button).parent().find('#bEdit').show();
     $(button).parent().find('#bDel').show();
-    var $row = $(button).parents('tr');         // get the row
-    $row.attr('data-status', '');               // remove editing status
+    let $currentRow = $(button).parents('tr');         // get the row
+    $currentRow.attr('data-status', '');               // remove editing status
   }
   _actionsModeEdit(button) {
     $(button).parent().find('#bAcep').show();
     $(button).parent().find('#bCanc').show();
     $(button).parent().find('#bEdit').hide();
     $(button).parent().find('#bDel').hide();
-    var $row = $(button).parents('tr');         // get the row
-    $row.attr('data-status', 'editing');        // indicate the editing status
+    let $currentRow = $(button).parents('tr');         // get the row
+    $currentRow.attr('data-status', 'editing');        // indicate the editing status
   }
 
   // --------------------------------------------------
@@ -149,51 +152,52 @@ class BSTable {
 
   _rowEdit(button) {                  
   // Indicate user is editing the row
-    var $row = $(button).parents('tr');       // access the row
-    console.log($row);
-    var $cols = $row.find('td');              // read rows
+    let $currentRow = $(button).parents('tr');       // access the row
+    console.log($currentRow);
+    let $cols = $currentRow.find('td');              // read rows
     console.log($cols);
-    if (this.currentlyEditingRow($row)) return;    // not currently editing, return
+    if (this.currentlyEditingRow($currentRow)) return;    // not currently editing, return
     //Pone en modo de edición
     this._modifyEachColumn(this.options.editableColumns, $cols, function($td) {  // modify each column
-      var content = $td.html();             // read content
+      let content = $td.html();             // read content
       console.log(content);
-      var div = '<div style="display: none;">' + content + '</div>';  // hide content (save for later use)
-      var input = '<input class="form-control input-sm"  data-original-value="' + content + '" value="' + content + '">';
+      let div = '<div style="display: none;">' + content + '</div>';  // hide content (save for later use)
+      let input = '<input class="form-control input-sm"  data-original-value="' + content + '" value="' + content + '">';
       $td.html(div + input);                // set content
     });
     this._actionsModeEdit(button);
   }
   _rowDelete(button) {                        
   // Remove the row
-    var $row = $(button).parents('tr');       // access the row
-    this.options.onBeforeDelete($row);
-    $row.remove();
+    let $currentRow = $(button).parents('tr');       // access the row
+    this.options.onBeforeDelete($currentRow);
+    $currentRow.remove();
     this.options.onDelete();
   }
   _rowAccept(button) {
   // Accept the changes to the row
-    var $row = $(button).parents('tr');       // access the row
-    var $cols = $row.find('td');              // read fields
-    if (!this.currentlyEditingRow($row)) return;   // not currently editing, return
+    let $currentRow = $(button).parents('tr');    // access the row
+    console.log($currentRow);
+    let $cols = $currentRow.find('td');              // read fields
+    if (!this.currentlyEditingRow($currentRow)) return;   // not currently editing, return
     
     // Finish editing the row & save edits
     this._modifyEachColumn(this.options.editableColumns, $cols, function($td) {  // modify each column
-      var cont = $td.find('input').val();     // read through each input
+      let cont = $td.find('input').val();     // read through each input
       $td.html(cont);                         // set the content and remove the input fields
     });
     this._actionsModeNormal(button);
-    this.options.onEdit($row);
+    this.options.onEdit($currentRow[0]);
   }
   _rowCancel(button) {
   // Reject the changes
-    var $row = $(button).parents('tr');       // access the row
-    var $cols = $row.find('td');              // read fields
-    if (!this.currentlyEditingRow($row)) return;   // not currently editing, return
+    let $currentRow = $(button).parents('tr');       // access the row
+    let $cols = $currentRow.find('td');              // read fields
+    if (!this.currentlyEditingRow($currentRow)) return;   // not currently editing, return
 
     // Finish editing the row & delete changes
     this._modifyEachColumn(this.options.editableColumns, $cols, function($td) {  // modify each column
-        var cont = $td.find('div').html();    // read div content
+        let cont = $td.find('div').html();    // read div content
         $td.html(cont);                       // set the content and remove the input fields
     });
     this._actionsModeNormal(button);
@@ -201,12 +205,12 @@ class BSTable {
   _actionAddRow() {
     // Add row to this table
 
-    var $allRows = this.table.find('tbody tr');
+    let $allRows = this.table.find('tbody tr');
     if ($allRows.length==0) { // there are no rows. we must create them
-      var $row = this.table.find('thead tr');  // find header
-      var $cols = $row.find('th');  // read each header field
+      let $currentRow = this.table.find('thead tr');  // find header
+      let $cols = $currentRow.find('th');  // read each header field
       // create the new row
-      var newColumnHTML = '';
+      let newColumnHTML = '';
       $cols.each(function() {
         let column = this; // Inner function this (column object)
         if ($(column).attr('name')=='bstable-actions') {
@@ -217,10 +221,10 @@ class BSTable {
       });
       this.table.find('tbody').append('<tr>'+newColumnHTML+'</tr>');
     } else { // there are rows in the table. We will clone the last row
-      var $lastRow = this.table.find('tr:last');
+      let $lastRow = this.table.find('tr:last');
       $lastRow.clone().appendTo($lastRow.parent());  
       $lastRow = this.table.find('tr:last');
-      var $cols = $lastRow.find('td');  //lee campos
+      let $cols = $lastRow.find('td');  //lee campos
       $cols.each(function() {
         let column = this; // Inner function this (column object)
         if ($(column).attr('name')=='bstable-actions') {
@@ -240,7 +244,7 @@ class BSTable {
 
   _modifyEachColumn($editableColumns, $cols, howToModify) {
   // Go through each editable field and perform the howToModifyFunction function
-    var n = 0;
+    let n = 0;
     $cols.each(function() {
       n++;
       if ($(this).attr('name')=='bstable-actions') return;    // exclude the actions column
@@ -256,7 +260,7 @@ class BSTable {
             return true;                                        // all columns are editable
         } else {                                                // option is defined
             //console.log('isEditableColumn: ' + columnIndex);  // DEBUG
-            for (var i = 0; i < $editableColumns.length; i++) {
+            for (let i = 0; i < $editableColumns.length; i++) {
               if (columnIndex == $editableColumns[i]) return true;
             }
             return false;  // column not found
@@ -280,27 +284,27 @@ class BSTable {
   convertTableToCSV(separator) {  
   // Convert table to CSV
     let _this = this;
-    var rowValues = '';
-    var tableValues = '';
+    let $currentRowValues = '';
+    let tableValues = '';
 
     _this.table.find('tbody tr').each(function() {
         // force edits to complete if in progress
         if (_this.currentlyEditingRow($(this))) {
             $(this).find('#bAcep').click();       // Force Accept Edit
         }
-        var $cols = $(this).find('td');           // read columns
-        rowValues = '';
+        let $cols = $(this).find('td');           // read columns
+        $currentRowValues = '';
         $cols.each(function() {
             if ($(this).attr('name')=='bstable-actions') {
                 // buttons column - do nothing
             } else {
-                rowValues = rowValues + $(this).html() + separator;
+                $currentRowValues = $currentRowValues + $(this).html() + separator;
             }
         });
-        if (rowValues!='') {
-            rowValues = rowValues.substr(0, rowValues.length-separator.length); 
+        if ($currentRowValues!='') {
+            $currentRowValues = $currentRowValues.substr(0, $currentRowValues.length-separator.length); 
         }
-        tableValues = tableValues + rowValues + '\n';
+        tableValues = tableValues + $currentRowValues + '\n';
     });
     return tableValues;
   }
