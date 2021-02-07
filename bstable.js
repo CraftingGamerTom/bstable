@@ -54,7 +54,8 @@ class BSTable {
 
     //Process "editableColumns" parameter. Sets the columns that will be editable
     if (this.options.editableColumns != null) {
-      console.log("editable columns: ", this.options.editableColumns);
+      // console.log("[DEBUG] editable columns: ", this.options.editableColumns);
+      
       //Extract felds
       this.options.editableColumns = this.options.editableColumns.split(',');
     }
