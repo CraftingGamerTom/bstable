@@ -25,6 +25,7 @@ class BSTable {
       editableColumns: null,          // Index to editable columns. If null all td will be editable. Ex.: "1,2,3,4,5"
       $addButton: null,               // Jquery object of "Add" button
       onEdit: function() {},          // Called after editing (accept button clicked)
+      callbackOnEdit: function() {},          // Called after editing (editing button clicked)
       onBeforeDelete: function() {},  // Called before deletion
       onDelete: function() {},        // Called after deletion
       onAdd: function() {},           // Called when added a new row
@@ -159,10 +160,12 @@ class BSTable {
     if (this.currentlyEditingRow($currentRow)) return;    // not currently editing, return
     //Pone en modo de edición
     this._modifyEachColumn(this.options.editableColumns, $cols, function($td) {  // modify each column
+      let th = $td.closest('table').find('th').eq($td.index());
+      let th_class = th.attr("bstable-class");
       let content = $td.html();             // read content
       console.log(content);
       let div = '<div style="display: none;">' + content + '</div>';  // hide content (save for later use)
-      let input = '<input class="form-control input-sm"  data-original-value="' + content + '" value="' + content + '">';
+      let input = '<input class="form-control input-sm '+th_class+'" data-original-value="' + content + '" value="' + content + '">';
       $td.html(div + input);                // set content
     });
     this._actionsModeEdit(button);
@@ -271,7 +274,7 @@ class BSTable {
   _addOnClickEventsToActions() {
     let _this = this;
     // Add onclick events to each action button
-    this.table.find('tbody tr #bEdit').each(function() {let button = this; button.onclick = function() {_this._rowEdit(button)} });
+    this.table.find('tbody tr #bEdit').each(function() {let button = this; button.onclick = function() {_this._rowEdit(button); _this.options.callbackOnEdit();} });
     this.table.find('tbody tr #bDel').each(function() {let button = this; button.onclick = function() {_this._rowDelete(button)} });
     this.table.find('tbody tr #bAcep').each(function() {let button = this; button.onclick = function() {_this._rowAccept(button)} });
     this.table.find('tbody tr #bCanc').each(function() {let button = this; button.onclick = function() {_this._rowCancel(button)} });
