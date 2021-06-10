@@ -23,6 +23,7 @@ class BSTable {
 
     var defaults = {
       editableColumns: null,          // Index to editable columns. If null all td will be editable. Ex.: "1,2,3,4,5"
+      tfoot: false,
       $addButton: null,               // Jquery object of "Add" button
       onEdit: function() {},          // Called after editing (accept button clicked)
       onBeforeDelete: function() {},  // Called before deletion
@@ -72,7 +73,10 @@ class BSTable {
   init() {
     this.table.find('thead tr').append('<th name="bstable-actions">' + this.options.advanced.columnLabel + '</th>');  // Append column to header
     this.table.find('tbody tr').append(this.actionsColumnHTML);
-
+    if (this.options.tfoot) {
+        this.table.find('tfoot tr').append('<th name="bstable-actions">' + this.options.advanced.columnLabel + '</th>');  // Append column to footer
+    }
+    
     this._addOnClickEventsToActions(); // Add onclick events to each action button in all rows
 
     // Process "addButton" parameter
