@@ -27,7 +27,9 @@ class BSTable {
       onEdit: function() {},          // Called after editing (accept button clicked)
       onBeforeDelete: function() {},  // Called before deletion
       onDelete: function() {},        // Called after deletion
-      onAdd: function() {},           // Called when added a new row
+      onAdd: function(row) {
+        console.log(row)
+      },           // Called when added a new row
       advanced: {                     // Do not override advanced unless you know what youre doing
           columnLabel: 'Actions',
           buttonHTML: `<div class="btn-group pull-right">
@@ -50,12 +52,12 @@ class BSTable {
     this.table = $('#' + tableId);
     this.options = $.extend(true, defaults, options);
 
-    /** @private */ this.actionsColumnHTML = '<td name="bstable-actions">' + this.options.advanced.buttonHTML + '</td>'; 
+    /** @private */ this.actionsColumnHTML = '<td name="bstable-actions">' + this.options.advanced.buttonHTML + '</td>';
 
     //Process "editableColumns" parameter. Sets the columns that will be editable
     if (this.options.editableColumns != null) {
       // console.log("[DEBUG] editable columns: ", this.options.editableColumns);
-      
+
       //Extract felds
       this.options.editableColumns = this.options.editableColumns.split(',');
     }
@@ -95,7 +97,7 @@ class BSTable {
   }
 
   /**
-   * Refreshes the editable table. 
+   * Refreshes the editable table.
    *
    * Literally just removes and initializes the editable table again, wrapped in one function.
    * @since 1.0.0
@@ -150,7 +152,7 @@ class BSTable {
   // -- Private Event Functions
   // --------------------------------------------------
 
-  _rowEdit(button) {                  
+  _rowEdit(button) {
   // Indicate user is editing the row
     let $currentRow = $(button).parents('tr');       // access the row
     console.log($currentRow);
@@ -167,7 +169,7 @@ class BSTable {
     });
     this._actionsModeEdit(button);
   }
-  _rowDelete(button) {                        
+  _rowDelete(button) {
   // Remove the row
     let $currentRow = $(button).parents('tr');       // access the row
     this.options.onBeforeDelete($currentRow);
@@ -177,17 +179,21 @@ class BSTable {
   _rowAccept(button) {
   // Accept the changes to the row
     let $currentRow = $(button).parents('tr');    // access the row
-    console.log($currentRow);
+    // console.log($currentRow);
+
+    let $isNewRow = $currentRow.attr("data-is-new") === "true";
+    $currentRow.removeAttr("data-is-new");
     let $cols = $currentRow.find('td');              // read fields
     if (!this.currentlyEditingRow($currentRow)) return;   // not currently editing, return
-    
+
     // Finish editing the row & save edits
     this._modifyEachColumn(this.options.editableColumns, $cols, function($td) {  // modify each column
       let cont = $td.find('input').val();     // read through each input
       $td.html(cont);                         // set the content and remove the input fields
     });
     this._actionsModeNormal(button);
-    this.options.onEdit($currentRow[0]);
+    this.options.onEdit($currentRow[0], $isNewRow);
+
   }
   _rowCancel(button) {
   // Reject the changes
@@ -222,7 +228,7 @@ class BSTable {
       this.table.find('tbody').append('<tr>'+newColumnHTML+'</tr>');
     } else { // there are rows in the table. We will clone the last row
       let $lastRow = this.table.find('tr:last');
-      $lastRow.clone().appendTo($lastRow.parent());  
+      $lastRow.clone().appendTo($lastRow.parent());
       $lastRow = this.table.find('tr:last');
       let $cols = $lastRow.find('td');  //lee campos
       $cols.each(function() {
@@ -235,7 +241,10 @@ class BSTable {
       });
     }
     this._addOnClickEventsToActions(); // Add onclick events to each action button in all rows
-    this.options.onAdd();
+    let lastRow = this.table.find('tr:last');
+    lastRow.attr("data-is-new", "true");
+    this._rowEdit(lastRow.find('td:last').find("#bEdit"));
+    this.options.onAdd(this.table.find('tr:last'));
   }
 
   // --------------------------------------------------
@@ -252,7 +261,7 @@ class BSTable {
       howToModify($(this));                                   // If editable, call the provided function
     });
     // console.log("Number of modified columns: " + n); // debug log
-    
+
 
     function isEditableColumn(columnIndex) {
     // Indicates if the column is editable, based on configuration
@@ -281,7 +290,7 @@ class BSTable {
   // -- Conversion Functions
   // --------------------------------------------------
 
-  convertTableToCSV(separator) {  
+  convertTableToCSV(separator) {
   // Convert table to CSV
     let _this = this;
     let $currentRowValues = '';
@@ -302,7 +311,7 @@ class BSTable {
             }
         });
         if ($currentRowValues!='') {
-            $currentRowValues = $currentRowValues.substr(0, $currentRowValues.length-separator.length); 
+            $currentRowValues = $currentRowValues.substr(0, $currentRowValues.length-separator.length);
         }
         tableValues = tableValues + $currentRowValues + '\n';
     });

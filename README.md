@@ -80,3 +80,28 @@ Refresh the table (Call if the table dynamically updates)
                         </button>
                     </div>`
             }
+
+## More Features
+
+#### Convert to CSV
+To return a csv String use the following command:
+```
+editableTable.convertTableToCSV();
+```
+Example Result:
+```
+Mark,Otto,@mdo
+Jacob,Thornton,@fat
+Larry,the Bird,@twitter
+```
+The default seperator is a comma (",") but you can pass in a seperator string you prefer. See below:
+
+```
+editableTable.convertTableToCSV("**");
+```
+Example Result:
+```
+Mark**Otto**@mdo
+Jacob**Thornton**@fat
+Larry**the Bird**@twitter
+```
